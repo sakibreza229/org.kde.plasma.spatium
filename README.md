@@ -18,7 +18,7 @@
 ### The Easy Way (Automated)
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/sakibreza229/org.kde.plasma.spatium.git](https://github.com/sakibreza229/org.kde.plasma.spatium.git)
+   git clone https://github.com/sakibreza229/org.kde.plasma.spatium.git
    cd org.kde.plasma.spatium
 
 2. Run the included install script:

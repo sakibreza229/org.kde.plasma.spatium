@@ -22,7 +22,6 @@
    cd org.kde.plasma.spatium
 
 2. Run the included install script:
-
 ```Bash
 chmod +x install.sh
 ./install.sh
@@ -32,12 +31,10 @@ chmod +x install.sh
 1. Ensure the metadata.json is in the root of the folder.
 
 2. Copy the entire folder to your Plasma plasmoids directory:
-
 ```Bash
 cp -r org.kde.plasma.spatium ~/.local/share/plasma/plasmoids/
 ```
 3. Refresh the Plasma shell:
-
 ```Bash
 kbuildsycoca6
 ```

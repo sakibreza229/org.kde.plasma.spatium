@@ -18,8 +18,8 @@ Kirigami.FormLayout {
     property alias cfg_desktopWrapOn: wrapCheck.checked
     property alias cfg_middleButtonCommand: middleCommand.text
     property alias cfg_customColorsEnabled: customColorsCheck.checked
-    property alias cfg_activeColor: activeColorField.text
-    property alias cfg_inactiveColor: inactiveColorField.text
+    property alias cfg_activeColor: activeColorCombo.currentValue
+    property alias cfg_inactiveColor: inactiveColorCombo.currentValue
     property alias cfg_animationDuration: animationSpin.value
     property alias cfg_canAddDesktops: addDesktopsCheck.checked
     property alias cfg_spacingFactor: spacingSpin.realValue
@@ -32,13 +32,13 @@ Kirigami.FormLayout {
     QQC2.SpinBox {
         id: dotSizeSpin
         Kirigami.FormData.label: i18n("Dot Size (px):")
-        from: 2; to: 32
+        from: 8; to: 16
     }
 
     QQC2.SpinBox {
         id: spacingSpin
         Kirigami.FormData.label: i18n("Spacing Factor:")
-        from: 1; to: 5; stepSize: 1
+        from: 1; to: 6; stepSize: 1
         property real realValue: value / 10.0
         textFromValue: (value, locale) => Number(value / 10.0).toLocaleString(locale, 'f', 1)
         valueFromText: (text, locale) => Math.round(Number.fromLocaleString(locale, text) * 10)
@@ -53,35 +53,38 @@ Kirigami.FormLayout {
     QQC2.SpinBox {
         id: activeHeightSpin
         Kirigami.FormData.label: i18n("Active Height (px):")
-        from: 2; to: 64
+        from: 8; to: 16
     }
 
     Kirigami.Heading {
-        Kirigami.FormData.isSection: true
-        text: i18n("Colors")
-    }
+    Kirigami.FormData.isSection: true
+    text: i18n("Colors")
+}
 
-    QQC2.CheckBox {
-        id: customColorsCheck
-        Kirigami.FormData.label: i18n("Custom Colors:")
-        text: i18n("Use custom hex colors")
-    }
+QQC2.CheckBox {
+    id: customColorsCheck
+    Kirigami.FormData.label: i18n("Custom Colors:")
+    text: i18n("Use preset colors")
+}
 
-    QQC2.TextField {
-        id: activeColorField
-        Kirigami.FormData.label: i18n("Active Color (Hex):")
-        placeholderText: "#3daee9"
-        visible: customColorsCheck.checked
-        Layout.fillWidth: true
-    }
+readonly property var colorPresets: ["white", "red", "blue", "green", "purple", "orange", "pink", "yellow", "cyan", "gray"]
 
-    QQC2.TextField {
-        id: inactiveColorField
-        Kirigami.FormData.label: i18n("Inactive Color (Hex):")
-        placeholderText: "#ffffff"
-        visible: customColorsCheck.checked
-        Layout.fillWidth: true
-    }
+QQC2.ComboBox {
+    id: activeColorCombo
+    Kirigami.FormData.label: i18n("Active Color:")
+    visible: customColorsCheck.checked
+    model: root.colorPresets
+    // This ensures the combo box shows the saved value on open
+    Component.onCompleted: currentIndex = Math.max(0, model.indexOf(plasmoid.configuration.activeColor))
+}
+
+QQC2.ComboBox {
+    id: inactiveColorCombo
+    Kirigami.FormData.label: i18n("Inactive Color:")
+    visible: customColorsCheck.checked
+    model: root.colorPresets
+    Component.onCompleted: currentIndex = Math.max(0, model.indexOf(plasmoid.configuration.inactiveColor))
+}
 
     Kirigami.Heading {
         Kirigami.FormData.isSection: true

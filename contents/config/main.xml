@@ -39,13 +39,13 @@
       <label>Use custom colors for dots</label>
       <default>false</default>
     </entry>
-    <entry name="activeColor" type="Color">
+    <entry name="activeColor" type="String">
       <label>Color for active desktop dot</label>
-      <default>#3daee9</default>
+      <default>white</default>
     </entry>
-    <entry name="inactiveColor" type="Color">
+    <entry name="inactiveColor" type="String">
       <label>Color for inactive desktop dots</label>
-      <default>#ffffff</default>
+      <default>gray</default>
     </entry>
     <entry name="animationDuration" type="Int">
       <label>Animation duration in milliseconds</label>

@@ -28,25 +28,23 @@ PlasmoidItem {
     
     property int desktopCount: virtualDesktopInfo.numberOfDesktops
     
-    property int dotSize: Math.max(2, plasmoid.configuration.dotSizeCustom || 8)
-    property real spacingFactor: Math.max(0.1, plasmoid.configuration.spacingFactor || 0.5)
-    property int activeWidth: Math.max(dotSize, plasmoid.configuration.activeSizeW || 20)
-    property int activeHeight: Math.max(dotSize, plasmoid.configuration.activeSizeH || 20)
+    property int dotSize: Math.max(8, plasmoid.configuration.dotSizeCustom || 8)
+    property real spacingFactor: Math.max(0.1, plasmoid.configuration.spacingFactor || 0.2)
+    property int activeWidth: Math.max(dotSize, plasmoid.configuration.activeSizeW || 24)
+    property int activeHeight: Math.max(dotSize, plasmoid.configuration.activeSizeH ||8)
     property bool wrapOn: plasmoid.configuration.desktopWrapOn !== false
-    property bool customColors: plasmoid.configuration.customColorsEnabled || false
+
     // We use a helper function to validate the color string
+property bool customColors: plasmoid.configuration.customColorsEnabled || false
+
 property color activeColor: {
     if (!customColors) return Kirigami.Theme.highlightColor;
-    let c = Color.transparent; // default fallback
-    c = plasmoid.configuration.activeColor;
-    // If the string is invalid, c will be invalid. Return highlight as fallback.
-    return !isNaN(c.r) ? c : Kirigami.Theme.highlightColor;
+    return plasmoid.configuration.activeColor // QML automatically converts "red" to #FF0000
 }
 
 property color inactiveColor: {
     if (!customColors) return Kirigami.Theme.textColor;
-    let c = plasmoid.configuration.inactiveColor;
-    return !isNaN(c.r) ? c : Kirigami.Theme.textColor;
+    return plasmoid.configuration.inactiveColor
 }
 
     property int animDuration: Math.max(0, plasmoid.configuration.animationDuration || 300)

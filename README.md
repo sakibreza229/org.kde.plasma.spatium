@@ -1,8 +1,8 @@
-# Spatium — GNOME-style Virtual Desktop Indicator for Plasma 6
+# Knome Workspaces — GNOME-style Virtual Desktop Switcher for Plasma 6
 
-**Spatium** is a lightweight, GNOME-inspired virtual desktop switcher built specifically for **KDE Plasma 6**. It provides a clean, minimal dot-based interface to navigate your workspaces with support for custom colors, animations, and mouse-wheel scrolling.
+**Knome Workspaces** is a lightweight, GNOME-inspired virtual desktop switcher built specifically for **KDE Plasma 6**. It provides a clean, minimal dot-based interface to navigate your workspaces with support for custom colors, animations, and mouse-wheel scrolling.
 
-![Spatium Preview](preview.png)
+![Knome Workspaces Preview](preview.png)
 
 ## Features
 
@@ -18,30 +18,30 @@
 ### The Easy Way (Automated)
 1. Clone the repository:
    ```bash
-   git clone https://github.com/sakibreza229/org.kde.plasma.spatium.git
-   cd org.kde.plasma.spatium
+   git clone https://github.com/sakibreza229/org.kde.plasma.knome-workspaces.git
+   cd org.kde.plasma.knome-workspaces
    ```
 
 2. Run the included install script:
-   ```Bash
+   ```bash
    chmod +x install.sh
    ./install.sh
    ```
 
 ### The Manual Way
-1. Ensure the metadata.json is in the root of the folder.
+1. Ensure the `metadata.json` is in the root of the folder.
 
 2. Copy the entire folder to your Plasma plasmoids directory:
-   ```Bash
-   cp -r org.kde.plasma.spatium ~/.local/share/plasma/plasmoids/
+   ```bash
+   cp -r org.kde.plasma.knome-workspaces ~/.local/share/plasma/plasmoids/
    ```
 3. Refresh the Plasma shell:
-   ```Bash
+   ```bash
    kbuildsycoca6
    ```
 
 ## Configuration
-Right-click the widget and select "Configure Spatium..."
+Right-click the widget and select **"Configure Knome Workspaces..."**
 
 ## Requirements
 - KDE Plasma 6.0+
@@ -49,3 +49,15 @@ Right-click the widget and select "Configure Spatium..."
 
 ## License
 This project is licensed under the GPL-3.0+ License.
+```
+
+---
+
+## Key Changes Made:
+
+| Before | After |
+|--------|-------|
+| Spatium | **Knome Workspaces** |
+| `org.kde.plasma.spatium` | `org.kde.plasma.knome-workspaces` |
+| "Configure Spatium..." | **"Configure Knome Workspaces..."** |
+| Spatium Preview | **Knome Workspaces Preview** |

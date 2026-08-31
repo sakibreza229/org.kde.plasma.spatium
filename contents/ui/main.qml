@@ -26,7 +26,7 @@ PlasmoidItem {
         return Math.max(0, (desktop || 1) - 1)
     }
     
-    property int desktopCount: virtualDesktopInfo.numberOfDesktops
+    property int desktopCount: (plasmoid.configuration.fixedDotCountEnabled === true) ? (plasmoid.configuration.fixedDotCount || 5) : (virtualDesktopInfo.numberOfDesktops || 1)
     
     property int dotSize: Math.max(8, plasmoid.configuration.dotSizeCustom || 8)
     property real spacingFactor: Math.max(0.1, plasmoid.configuration.spacingFactor || 0.2)
@@ -49,7 +49,8 @@ property color inactiveColor: {
 
     property int animDuration: Math.max(0, plasmoid.configuration.animationDuration || 300)
     property bool canAddDesktops: plasmoid.configuration.canAddDesktops !== false
-    
+    property int dotShape: plasmoid.configuration.dotShape || 0
+
     property real spacing: spacingFactor * dotSize
     property bool isHorizontal: plasmoid.formFactor !== PlasmaCore.Types.Vertical
     property int wheelDelta: 0
@@ -64,12 +65,15 @@ property color inactiveColor: {
     onActiveWidthChanged: updateLayout()
     onActiveHeightChanged: updateLayout()
     onDesktopCountChanged: updateLayout()
-    
-    Layout.minimumWidth: isHorizontal ? 
-        (desktopCount * dotSize) + ((desktopCount - 1) * spacing) + (activeWidth - dotSize) : activeWidth
-        
-    Layout.minimumHeight: !isHorizontal ? 
-        (desktopCount * dotSize) + ((desktopCount - 1) * spacing) + (activeHeight - dotSize) : activeHeight
+    onDotShapeChanged: updateLayout()
+
+    Layout.minimumWidth: isHorizontal
+        ? (dotShape === 2 ? nameRow.implicitWidth : (desktopCount * dotSize) + ((desktopCount - 1) * spacing) + (activeWidth - dotSize))
+        : (dotShape === 2 ? nameColumn.implicitWidth : activeWidth)
+
+    Layout.minimumHeight: !isHorizontal
+        ? (dotShape === 2 ? nameColumn.implicitHeight : (desktopCount * dotSize) + ((desktopCount - 1) * spacing) + (activeHeight - dotSize))
+        : (dotShape === 2 ? nameRow.implicitHeight : activeHeight)
         
     Layout.preferredWidth: Layout.minimumWidth
     Layout.preferredHeight: Layout.minimumHeight
@@ -114,57 +118,128 @@ property color inactiveColor: {
         id: mainContainer
         anchors.fill: parent
         
+        // --- Circle / Square mode ---
         Repeater {
             id: desktopRepeater
-            model: desktopCount
-            
+            model: dotShape < 2 ? desktopCount : 0
+
             delegate: Item {
                 id: delegateItem
-                // Track hover state via the MouseArea
                 readonly property bool isHovered: mouseHandler.containsMouse
 
                 x: isHorizontal ? (index < currentDesktop ? index * (dotSize + spacing) : (index > currentDesktop ? (index * (dotSize + spacing)) + (activeWidth - dotSize) : index * (dotSize + spacing))) : (parent.width - width) / 2
                 y: !isHorizontal ? (index < currentDesktop ? index * (dotSize + spacing) : (index > currentDesktop ? (index * (dotSize + spacing)) + (activeHeight - dotSize) : index * (dotSize + spacing))) : (parent.height - height) / 2
-                
+
                 width: isHorizontal ? (index === currentDesktop ? activeWidth : dotSize) : dotSize
                 height: !isHorizontal ? (index === currentDesktop ? activeHeight : dotSize) : dotSize
-                
+
                 Rectangle {
                     id: desktopDot
                     anchors.fill: parent
                     color: index === currentDesktop ? activeColor : inactiveColor
-                    
-                    // --- Opacity Hover Logic ---
-                    // Active: 1.0 (Always solid)
-                    // Inactive + Hover: 0.9 (Bright)
-                    // Inactive: 0.4 (Subtle/Dimmed)
-                    opacity: {
-                        if (index === currentDesktop) return 1.0;
-                        return isHovered ? 0.9 : 0.4;
-                    }
+                    opacity: index === currentDesktop ? 1.0 : (isHovered ? 0.9 : 0.4)
+                    radius: dotShape === 0 ? height * 0.5 : 2
 
-                    radius: height * 0.5
-                    
-                    // Smooth transitions for both color and the new hover opacity
                     Behavior on color { ColorAnimation { duration: animDuration; easing.type: Easing.InOutQuad } }
                     Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
-                    
+
                     MouseArea {
                         id: mouseHandler
                         anchors.fill: parent
-                        hoverEnabled: true // Essential for containsMouse to work
-                        onClicked: switchToDesktop(index)
-                        
-                        // Change cursor to pointing hand on hover
+                        hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+                        onClicked: switchToDesktop(index)
                     }
                 }
-                
-                // Layout animations
+
                 Behavior on x { NumberAnimation { duration: animDuration; easing.type: Easing.OutQuad } }
                 Behavior on y { NumberAnimation { duration: animDuration; easing.type: Easing.OutQuad } }
                 Behavior on width { NumberAnimation { duration: animDuration; easing.type: Easing.OutQuad } }
                 Behavior on height { NumberAnimation { duration: animDuration; easing.type: Easing.OutQuad } }
+            }
+        }
+
+        // --- Desktop Name mode (horizontal) ---
+        Row {
+            id: nameRow
+            visible: isHorizontal && dotShape === 2
+            anchors.centerIn: parent
+            spacing: root.spacing
+
+            Repeater {
+                model: dotShape === 2 ? desktopCount : 0
+
+                delegate: Item {
+                    readonly property bool isHovered: nameMouseArea.containsMouse
+                    implicitWidth: nameText.implicitWidth
+                    implicitHeight: nameText.implicitHeight
+                    width: implicitWidth
+                    height: implicitHeight
+
+                    Text {
+                        id: nameText
+                        text: (virtualDesktopInfo.desktopNames && virtualDesktopInfo.desktopNames[index])
+                              ? virtualDesktopInfo.desktopNames[index]
+                              : (index + 1).toString()
+                        color: index === currentDesktop ? activeColor : inactiveColor
+                        opacity: index === currentDesktop ? 1.0 : (isHovered ? 0.9 : 0.4)
+                        font.pixelSize: dotSize + 2
+                        font.bold: index === currentDesktop
+
+                        Behavior on color { ColorAnimation { duration: animDuration; easing.type: Easing.InOutQuad } }
+                        Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
+                    }
+
+                    MouseArea {
+                        id: nameMouseArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: switchToDesktop(index)
+                    }
+                }
+            }
+        }
+
+        // --- Desktop Name mode (vertical) ---
+        Column {
+            id: nameColumn
+            visible: !isHorizontal && dotShape === 2
+            anchors.centerIn: parent
+            spacing: root.spacing
+
+            Repeater {
+                model: dotShape === 2 ? desktopCount : 0
+
+                delegate: Item {
+                    readonly property bool isHovered: nameMouseAreaV.containsMouse
+                    implicitWidth: nameTextV.implicitWidth
+                    implicitHeight: nameTextV.implicitHeight
+                    width: implicitWidth
+                    height: implicitHeight
+
+                    Text {
+                        id: nameTextV
+                        text: (virtualDesktopInfo.desktopNames && virtualDesktopInfo.desktopNames[index])
+                              ? virtualDesktopInfo.desktopNames[index]
+                              : (index + 1).toString()
+                        color: index === currentDesktop ? activeColor : inactiveColor
+                        opacity: index === currentDesktop ? 1.0 : (isHovered ? 0.9 : 0.4)
+                        font.pixelSize: dotSize + 2
+                        font.bold: index === currentDesktop
+
+                        Behavior on color { ColorAnimation { duration: animDuration; easing.type: Easing.InOutQuad } }
+                        Behavior on opacity { NumberAnimation { duration: 150; easing.type: Easing.OutQuad } }
+                    }
+
+                    MouseArea {
+                        id: nameMouseAreaV
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: switchToDesktop(index)
+                    }
+                }
             }
         }
         

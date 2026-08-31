@@ -7,11 +7,31 @@
 ## Features
 
 * **Minimalist UI**: Clean dots that expand to bars for the active desktop.
+* **Three dot shapes**: Choose between circle, square, or desktop name label.
+* **Desktop Name mode**: Displays the actual desktop name as set in KWin (e.g. `Home`, `Documents`), falling back to the index number.
 * **Highly Customizable**: Adjust dot sizes, spacing, and active dimensions.
-* **Hex Color Support**: Input custom hex codes for precise branding.
+* **Fixed dot count**: Display a fixed number of dots regardless of how many virtual desktops are active.
+* **Custom Color Picker**: Pick any color via the native system color dialog or type a hex code directly (`#RRGGBB`).
 * **Desktop Management**: Add or remove virtual desktops directly via the context menu.
 * **Scrolling Support**: Switch desktops using the mouse wheel with optional wrap-around.
 * **Plasma 6 Ready**: Uses the latest Kirigami and Plasma 6 APIs.
+
+## Configuration
+Right-click the widget and select **"Configure Spatium..."** to access all options.
+
+| Section | Option | Description |
+|---|---|---|
+| Appearance | Shape | Circle, Square, or Desktop Name |
+| Appearance | Dot Size | Size of inactive dots in px (disabled in Name mode) |
+| Appearance | Spacing Factor | Gap between dots as a fraction of dot size |
+| Appearance | Active Width/Height | Size of the active dot (disabled in Name mode) |
+| Colors | Custom Colors | Enable custom color overrides |
+| Colors | Active / Inactive Color | Pick via color dialog or enter a hex code |
+| Behavior | Fixed Dot Count | Show a fixed number of dots |
+| Behavior | Wrap Around | Wrap when scrolling past the last desktop |
+| Behavior | Animation | Transition duration in milliseconds |
+| Behavior | Middle Click Command | Shell command to run on middle click |
+| Behavior | Desktop Management | Allow adding/removing desktops via context menu |
 
 ## Installation
 
